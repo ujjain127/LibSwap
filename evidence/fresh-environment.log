@@ -1,0 +1,162 @@
+
+COMMAND: docker compose --env-file .env.docker -p libswap-freshcheck build --pull --no-cache
+ Image libswap-freshcheck-app Building
+#1 [internal] load local bake definitions
+#1 reading from stdin 704B done
+#1 DONE 0.0s
+
+#2 [internal] load build definition from Dockerfile
+#2 transferring dockerfile: 366B done
+#2 DONE 0.0s
+
+#3 [internal] load metadata for docker.io/library/node:22-bookworm-slim
+#3 DONE 2.3s
+
+#4 [internal] load .dockerignore
+#4 transferring context: 205B done
+#4 DONE 0.0s
+
+#5 [internal] load build context
+#5 transferring context: 114.12kB done
+#5 DONE 0.0s
+
+#6 [1/5] FROM docker.io/library/node:22-bookworm-slim@sha256:83f487e0a63425e5b4d146fb5e5be574bcbe1b7b843d3ebafdd95eaf7767a7e5
+#6 resolve docker.io/library/node:22-bookworm-slim@sha256:83f487e0a63425e5b4d146fb5e5be574bcbe1b7b843d3ebafdd95eaf7767a7e5 0.0s done
+#6 DONE 0.0s
+
+#7 [2/5] WORKDIR /app
+#7 CACHED
+
+#8 [3/5] COPY package.json package-lock.json ./
+#8 DONE 0.0s
+
+#9 [4/5] RUN npm ci --omit=dev --ignore-scripts && npm cache clean --force
+#9 0.780
+#9 0.780 added 102 packages, and audited 103 packages in 650ms
+#9 0.780
+#9 0.780 30 packages are looking for funding
+#9 0.780   run `npm fund` for details
+#9 0.780
+#9 0.780 found 0 vulnerabilities
+#9 0.781 npm notice
+#9 0.781 npm notice New major version of npm available! 10.9.8 -> 12.0.2
+#9 0.781 npm notice Changelog: https://github.com/npm/cli/releases/tag/v12.0.2
+#9 0.781 npm notice To update run: npm install -g npm@12.0.2
+#9 0.781 npm notice
+#9 0.822 npm warn using --force Recommended protections disabled.
+#9 DONE 0.9s
+
+#10 [5/5] COPY --chown=node:node . .
+#10 DONE 0.0s
+
+#11 exporting to image
+#11 exporting layers
+#11 exporting layers 0.3s done
+#11 exporting manifest sha256:a36e826332ed2f73ba4b36bc2c729f5e2816684fec8fbac866ff38874d02debf done
+#11 exporting config sha256:32e860e6addb552f1073bc1ba949578d03092143e78053c535a17f5f2ac8cdea done
+#11 exporting attestation manifest sha256:e6b5aea46784540c72ce8f38325b87db1e16c34527c416aebfa903e8a5517475 done
+#11 exporting manifest list sha256:0b9fe7d2a95efe05ed7ee01703a7adffd079cd5c485f1c6cf8d9cf80aad13b72 done
+#11 naming to docker.io/library/libswap-freshcheck-app:latest done
+#11 unpacking to docker.io/library/libswap-freshcheck-app:latest 0.1s done
+#11 DONE 0.4s
+
+#12 resolving provenance for metadata file
+#12 DONE 0.0s
+ Image libswap-freshcheck-app Built
+
+COMMAND: docker compose --env-file .env.docker -p libswap-freshcheck up -d --wait
+ Network libswap-freshcheck_default Creating
+ Network libswap-freshcheck_default Created
+ Volume libswap-freshcheck_mongo-data Creating
+ Volume libswap-freshcheck_mongo-data Created
+ Container libswap-freshcheck-mongo-1 Creating
+ Container libswap-freshcheck-mongo-1 Created
+ Container libswap-freshcheck-app-1 Creating
+ Container libswap-freshcheck-app-1 Created
+ Container libswap-freshcheck-mongo-1 Starting
+ Container libswap-freshcheck-mongo-1 Started
+ Container libswap-freshcheck-mongo-1 Waiting
+ Container libswap-freshcheck-mongo-1 Healthy
+ Container libswap-freshcheck-app-1 Starting
+ Container libswap-freshcheck-app-1 Started
+ Container libswap-freshcheck-mongo-1 Waiting
+ Container libswap-freshcheck-app-1 Waiting
+ Container libswap-freshcheck-mongo-1 Healthy
+ Container libswap-freshcheck-app-1 Healthy
+
+COMMAND: docker compose --env-file .env.docker -p libswap-freshcheck exec -T app npm run seed:demo
+
+> libswap@1.0.0 seed:demo
+> node scripts/seed-demo.js
+
+Demo books and accounts ready. Existing passwords, loans and reservations were preserved.
+Accounts: demo.reader@libswap.test and demo.reserver@libswap.test. Password: DEMO_PASSWORD in .env.docker.
+npm notice
+npm notice New major version of npm available! 10.9.8 -> 12.0.2
+npm notice Changelog: https://github.com/npm/cli/releases/tag/v12.0.2
+npm notice To update run: npm install -g npm@12.0.2
+npm notice
+
+COMMAND: docker compose --env-file .env.docker -p libswap-freshcheck exec -T -e TEST_MONGODB_URI=mongodb://mongo:27017 app npm test
+
+> libswap@1.0.0 test
+> node --test tests/circulation.test.js
+
+TAP version 13
+# ◇ injected env (0) from .env // tip: ⌁ auth for agents [www.vestauth.com]
+# Subtest: real login, borrowing, returns, reservations, legacy records and concurrent requests
+ok 1 - real login, borrowing, returns, reservations, legacy records and concurrent requests
+  ---
+  duration_ms: 1412.650668
+  type: 'test'
+  ...
+1..1
+# tests 1
+# suites 0
+# pass 1
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 1530.708209
+
+COMMAND: docker compose --env-file .env.docker -p libswap-freshcheck exec -T app node scripts/docker-e2e.js before
+PASS: identity, all pages, login, borrow, reserve and return ownership. Restart app and MongoDB, then run the after phase.
+
+COMMAND: docker compose --env-file .env.docker -p libswap-freshcheck down
+ Container libswap-freshcheck-app-1 Stopping
+ Container libswap-freshcheck-app-1 Stopped
+ Container libswap-freshcheck-app-1 Removing
+ Container libswap-freshcheck-app-1 Removed
+ Container libswap-freshcheck-mongo-1 Stopping
+ Container libswap-freshcheck-mongo-1 Stopped
+ Container libswap-freshcheck-mongo-1 Removing
+ Container libswap-freshcheck-mongo-1 Removed
+ Network libswap-freshcheck_default Removing
+ Network libswap-freshcheck_default Removed
+
+COMMAND: docker compose --env-file .env.docker -p libswap-freshcheck up -d --wait
+ Network libswap-freshcheck_default Creating
+ Network libswap-freshcheck_default Created
+ Container libswap-freshcheck-mongo-1 Creating
+ Container libswap-freshcheck-mongo-1 Created
+ Container libswap-freshcheck-app-1 Creating
+ Container libswap-freshcheck-app-1 Created
+ Container libswap-freshcheck-mongo-1 Starting
+ Container libswap-freshcheck-mongo-1 Started
+ Container libswap-freshcheck-mongo-1 Waiting
+ Container libswap-freshcheck-mongo-1 Healthy
+ Container libswap-freshcheck-app-1 Starting
+ Container libswap-freshcheck-app-1 Started
+ Container libswap-freshcheck-app-1 Waiting
+ Container libswap-freshcheck-mongo-1 Waiting
+ Container libswap-freshcheck-mongo-1 Healthy
+ Container libswap-freshcheck-app-1 Healthy
+
+COMMAND: docker compose --env-file .env.docker -p libswap-freshcheck exec -T app node scripts/docker-e2e.js after
+PASS: loan and reservation survive restart, FIFO priority, reserved borrowing and final return.
+
+COMMAND: docker compose --env-file .env.docker -p libswap-freshcheck ps
+NAME                         IMAGE                    COMMAND                  SERVICE   CREATED          STATUS                    PORTS
+libswap-freshcheck-app-1     libswap-freshcheck-app   "docker-entrypoint.s…"   app       12 seconds ago   Up 6 seconds (healthy)    127.0.0.1:3011->3000/tcp
+libswap-freshcheck-mongo-1   mongo:8.0                "docker-entrypoint.s…"   mongo     12 seconds ago   Up 11 seconds (healthy)   27017/tcp
