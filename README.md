@@ -73,16 +73,17 @@ The tests cover:
 * Reservations
 * Returns
 * Queue priority
-* Database persistence
 * Page loading
 
 ## Persistence
 
-To verify persistence:
+On an isolated demo stack, test borrowing and reservations across container recreation:
 
 ```bash
+docker compose --env-file .env.docker exec -T app node scripts/docker-e2e.js before
 docker compose --env-file .env.docker down
 docker compose --env-file .env.docker up -d --wait
+docker compose --env-file .env.docker exec -T app node scripts/docker-e2e.js after
 ```
 
 Loans and reservations remain because MongoDB uses the `mongo-data` volume.
@@ -97,11 +98,7 @@ The marker does not need private credentials because Docker creates local settin
 
 ## Fresh-Environment Testing
 
-Fresh-environment testing details are available in:
-
-* `evidence/FRESH_ENVIRONMENT.md`
-* `evidence/fresh-environment.log`
-* `.github/workflows/docker-smoke.yml`
+The `.github/workflows/docker-smoke.yml` workflow builds and tests the application on a fresh Ubuntu runner. Check the repository's Actions tab for the result of each run.
 
 ## Stop the Application
 

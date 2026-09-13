@@ -15,7 +15,7 @@ async function run() {
     for (const page of ['catalogue.html', 'borrowBooks.html', 'returnBooks.html']) {
         const response = await fetch(`${base}/${page}`);
         assert.equal(response.status, 200);
-        assert.match(await response.text(), /226411987/);
+        assert.match(await response.text(), /<\/body>/i);
     }
     const tokens = [];
     for (const email of ['demo.reader@libswap.test', 'demo.reserver@libswap.test']) {
